@@ -2,6 +2,8 @@
 
 Rubric is a premium, responsive web application designed for students and educators to organize academic terms, manage subjects, log daily class attendances, and keep journal entries/memos for each class session. Built with **Next.js**, **Prisma**, **SQLite**, and styled using a warm, editorial clay design system.
 
+**Production URL:** [https://rubric-core.vercel.app](https://rubric-core.vercel.app)
+
 ---
 
 ## Key Features

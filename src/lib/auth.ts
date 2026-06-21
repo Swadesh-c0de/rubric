@@ -22,27 +22,36 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Please enter your email and password");
         }
 
-        const user = await prisma.user.findUnique({
-          where: {
-            email: credentials.email.toLowerCase(),
-          },
-        });
+        try {
+          const user = await prisma.user.findUnique({
+            where: {
+              email: credentials.email.toLowerCase(),
+            },
+          });
 
-        if (!user) {
-          throw new Error("No user found with this email");
+          if (!user) {
+            throw new Error("Incorrect email or password");
+          }
+
+          const isValid = await bcrypt.compare(credentials.password, user.password);
+
+          if (!isValid) {
+            throw new Error("Incorrect email or password");
+          }
+
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+          };
+        } catch (err: unknown) {
+          const errMsg = err instanceof Error ? err.message : "";
+          if (errMsg === "Incorrect email or password") {
+            throw err;
+          }
+          console.error("Authentication system error:", err);
+          throw new Error("Authentication service is temporarily unavailable. Please try again later.");
         }
-
-        const isValid = await bcrypt.compare(credentials.password, user.password);
-
-        if (!isValid) {
-          throw new Error("Incorrect password");
-        }
-
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-        };
       },
     }),
   ],
