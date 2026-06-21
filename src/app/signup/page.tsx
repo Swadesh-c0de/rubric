@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { User, Mail, Lock, ArrowRight, Loader2, AlertCircle, CheckCircle2, Eye, EyeOff } from "lucide-react";
+import { signIn } from "next-auth/react";
 import styles from "../login/login.module.css"; // Reuse login styles
 
 export default function SignupPage() {
@@ -56,10 +57,25 @@ export default function SignupPage() {
         setLoading(false);
       } else {
         setSuccess(true);
+        // Automatically sign in the user
+        const loginRes = await signIn("credentials", {
+          email,
+          password,
+          redirect: false,
+        });
+
         setLoading(false);
-        setTimeout(() => {
-          router.push("/login");
-        }, 1500);
+        if (loginRes?.error) {
+          setError("Account created, but automatic login failed. Redirecting to login page...");
+          setTimeout(() => {
+            router.push("/login");
+          }, 2000);
+        } else {
+          setTimeout(() => {
+            router.push("/dashboard");
+            router.refresh();
+          }, 1500);
+        }
       }
     } catch {
       setError("An unexpected error occurred. Please try again.");
