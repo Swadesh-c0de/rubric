@@ -72,8 +72,7 @@ export default function SignupPage() {
           }, 2000);
         } else {
           setTimeout(() => {
-            router.push("/dashboard");
-            router.refresh();
+            window.location.href = "/dashboard";
           }, 1500);
         }
       }
