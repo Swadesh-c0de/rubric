@@ -1,0 +1,526 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  padding-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.headerTitle {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.headerSubtitle {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+
+.signOutBtn {
+  justify-content: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  padding: 8px 16px;
+  align-self: center;
+}
+
+/* Layout */
+.settingsLayout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.leftCol {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.rightCol {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Tabs list card */
+.tabsCard {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tabBtn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid transparent;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  text-align: left;
+  transition: all var(--transition-normal);
+}
+
+.tabBtn:hover {
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--text-primary);
+}
+
+.tabBtnActive {
+  background: linear-gradient(135deg, rgba(235, 127, 94, 0.08) 0%, rgba(235, 127, 94, 0.01) 100%);
+  border-color: rgba(235, 127, 94, 0.2);
+  color: var(--text-primary) !important;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.tabBtnActive svg {
+  color: var(--accent-primary);
+  filter: drop-shadow(0 0 4px rgba(235, 127, 94, 0.5));
+}
+
+.tabBtnDanger:hover {
+  color: var(--accent-danger);
+  background: rgba(184, 77, 60, 0.05);
+}
+
+.tabBtnActiveDanger {
+  background: rgba(184, 77, 60, 0.08);
+  border-color: rgba(184, 77, 60, 0.2);
+  color: var(--accent-danger) !important;
+  font-weight: 600;
+}
+
+/* Right settings card */
+.settingsCard {
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.cardHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.06);
+  padding-bottom: 16px;
+}
+
+.cardHeaderInline {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.06);
+  padding-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.cardTitle {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.cardSubtitle {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+/* Forms */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-width: 500px;
+}
+
+.readOnlyInput {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--card-border);
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  word-break: break-all;
+}
+
+.inputIcon {
+  color: var(--text-muted);
+  opacity: 0.7;
+}
+
+.helpText {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+  display: block;
+}
+
+/* Add session box styling */
+.addSessionBox {
+  background: var(--bg-secondary);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-sm);
+  padding: 18px;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.inlineFormTitle {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 14px;
+  font-family: var(--font-display);
+}
+
+.durationInputRow {
+  position: relative;
+}
+
+.durationInputRow input {
+  padding-left: 38px !important;
+}
+
+.durationInputRow .inputIcon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.inlineFormActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+/* Sessions list */
+.sessionsListContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sessionCard {
+  background: var(--bg-secondary);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-sm);
+  padding: 14px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  transition: border-color var(--transition-normal);
+}
+
+.sessionCard:hover {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.sessionMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sessionNameText {
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: var(--text-primary);
+}
+
+.sessionMetaInfo {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+}
+
+.sessionDeleteBtn {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.sessionDeleteBtn:hover {
+  color: var(--accent-danger);
+  background: rgba(184, 77, 60, 0.1);
+  border-color: rgba(184, 77, 60, 0.2);
+}
+
+.sessionsLoading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  gap: 12px;
+  color: var(--text-secondary);
+}
+
+.sessionsEmpty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  gap: 12px;
+  color: var(--text-muted);
+  text-align: center;
+  border: 1px dashed var(--card-border);
+  border-radius: var(--radius-sm);
+}
+
+.sessionsEmpty p {
+  font-size: 0.85rem;
+  max-width: 250px;
+}
+
+/* Danger Zone */
+.dangerZoneBorder {
+  border-color: rgba(184, 77, 60, 0.3) !important;
+}
+
+.dangerTitle {
+  color: var(--accent-danger);
+}
+
+.dangerNotice {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: rgba(184, 77, 60, 0.08);
+  border: 1px solid rgba(184, 77, 60, 0.2);
+  padding: 14px;
+  border-radius: var(--radius-sm);
+  color: var(--accent-danger);
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.dangerNotice strong {
+  display: block;
+  margin-bottom: 2px;
+}
+
+.dangerNotice p {
+  color: var(--text-secondary);
+}
+
+.deleteAccountActionBtn {
+  background: var(--accent-danger);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  font-weight: 600;
+  padding: 10px 18px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  align-self: flex-start;
+}
+
+.deleteAccountActionBtn:hover:not(:disabled) {
+  background: hsl(0, 72%, 40%);
+}
+
+.deleteAccountActionBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Status Notifications */
+.statusMsg {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+
+.success {
+  background: rgba(122, 143, 117, 0.08);
+  border: 1px solid rgba(122, 143, 117, 0.2);
+  color: var(--accent-success);
+}
+
+.error {
+  background: rgba(184, 77, 60, 0.08);
+  border: 1px solid rgba(184, 77, 60, 0.2);
+  color: var(--accent-danger);
+}
+
+/* Spinners */
+.spinnerTiny {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-top-color: var(--accent-danger);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsiveness */
+@media (max-width: 900px) {
+  .settingsLayout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  .leftCol {
+    min-width: 0;
+  }
+
+  .rightCol {
+    min-width: 0;
+  }
+
+  .tabsCard {
+    flex-direction: row;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    padding: 8px 8px 12px 8px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+    gap: 8px;
+  }
+
+  .tabsCard::-webkit-scrollbar {
+    display: block;
+    height: 3px;
+  }
+
+  .tabsCard::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .tabsCard::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 99px;
+  }
+
+  .tabsCard::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-primary);
+  }
+
+  .tabBtn {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    justify-content: center;
+    padding: 8px 16px;
+    font-size: 0.82rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .settingsCard {
+    padding: 16px;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .signOutBtn {
+    width: 100%;
+  }
+
+  .cardHeaderInline {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .addNewBtn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .sessionCard {
+    align-items: center;
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .sessionNameText {
+    font-size: 0.88rem;
+    word-break: break-word;
+  }
+
+  .sessionMetaInfo {
+    font-size: 0.72rem;
+  }
+
+  .inlineFormActions {
+    flex-direction: column-reverse;
+    gap: 8px;
+  }
+
+  .inlineFormActions button {
+    width: 100%;
+  }
+
+  .deleteAccountActionBtn {
+    width: 100%;
+    text-align: center;
+  }
+}

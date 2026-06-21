@@ -1,0 +1,485 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header h3 {
+  font-size: 1.25rem;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+}
+
+.addBox {
+  padding: 18px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-premium);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: auto 1fr 1fr;
+  align-items: flex-end;
+  gap: 16px;
+}
+
+.colorPicker {
+  width: 50px;
+  height: 50px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--glass-border);
+  cursor: pointer;
+  background: transparent;
+  padding: 2px;
+}
+
+.errorText {
+  color: var(--accent-danger);
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.emptyBox {
+  border: 2px dashed var(--glass-border);
+  padding: 50px 30px;
+  text-align: center;
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-secondary);
+}
+
+.emptyIcon {
+  color: var(--text-muted);
+}
+
+.emptyBox h4 {
+  font-size: 1.05rem;
+  color: var(--text-primary);
+}
+
+.emptyBox p {
+  font-size: 0.85rem;
+  max-width: 260px;
+}
+
+/* Subject cards grid — responsive auto-fill */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 14px;
+}
+
+.card {
+  position: relative;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 0 var(--radius-md) var(--radius-md) var(--radius-md);
+  padding: 18px 16px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: var(--shadow-premium);
+  margin-top: 12px;
+  transition: all var(--transition-normal);
+}
+
+.card:hover {
+  border-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.folderTab {
+  position: absolute;
+  top: -12px;
+  left: -1px;
+  height: 12px;
+  width: 70px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-bottom: none;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  overflow: hidden;
+}
+
+.folderTabColor {
+  width: 100%;
+  height: 3px;
+}
+
+.cardTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.subName {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: var(--text-primary);
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+.rateBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px dashed var(--text-muted);
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+
+.colorDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.5), 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.rate {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 0.75rem;
+  color: var(--text-primary);
+  letter-spacing: 0.03em;
+}
+
+.stats {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.08);
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+  padding: 12px 0;
+}
+
+.statLine {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.statLine span {
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.statLine strong {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--text-primary);
+}
+
+.positivePoints {
+  color: var(--accent-success) !important;
+}
+
+.negativePoints {
+  color: var(--accent-danger) !important;
+}
+
+.cardFooter {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.footerLabel {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+.footerVal {
+  color: var(--accent-success);
+  font-weight: 600;
+}
+
+.footerValDanger {
+  color: var(--accent-danger);
+  font-weight: 600;
+}
+
+.footerDivider {
+  color: rgba(255, 255, 255, 0.1);
+  font-weight: 300;
+}
+
+/* ═══════════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════════ */
+
+/* Large monitor — bigger cards */
+@media (min-width: 1600px) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 22px;
+  }
+
+  .subName {
+    font-size: 1.3rem;
+  }
+
+  .card {
+    padding: 28px 24px 22px 24px;
+  }
+
+  .addBox {
+    padding: 28px;
+  }
+}
+
+/* Tablet landscape — within a 2-col parent, 2-col grid */
+@media (max-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+  }
+}
+
+/* Tablet portrait — single column parent, stretch cards */
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 14px;
+  }
+
+  .addBox {
+    padding: 20px;
+  }
+
+  .header h3 {
+    font-size: 1.15rem;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .card {
+    padding: 16px 14px 14px 14px;
+    gap: 12px;
+  }
+
+  .subName {
+    font-size: 1rem;
+  }
+
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+
+  .colorPicker {
+    width: 42px;
+    height: 42px;
+  }
+
+  .addBox {
+    padding: 16px;
+  }
+
+  .emptyBox {
+    padding: 32px 20px;
+  }
+}
+
+/* Very small mobile — single col cards */
+@media (max-width: 360px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Edit & Delete Actions for Subject Cards */
+.cardHeaderRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.cardActions {
+  display: flex;
+  gap: 4px;
+  opacity: 0.6;
+  transition: opacity var(--transition-fast);
+}
+
+.card:hover .cardActions {
+  opacity: 1;
+}
+
+.iconBtn,
+.iconBtnDanger {
+  background: transparent;
+  border: none;
+  padding: 4px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+}
+
+.iconBtn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+}
+
+.iconBtnDanger:hover {
+  background: rgba(184, 77, 60, 0.1);
+  color: var(--accent-danger);
+}
+
+.editForm {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.colorPickerSmall {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--glass-border);
+  cursor: pointer;
+  background: transparent;
+  padding: 2px;
+}
+
+.editActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.compactContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 18px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-premium);
+  width: 100%;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.compactList {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.compactTitle {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+  margin-right: 4px;
+}
+
+.compactBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--glass-border);
+  font-size: 0.8rem;
+  transition: all var(--transition-fast);
+}
+
+.compactName {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.compactRate {
+  font-weight: 700;
+  font-size: 0.75rem;
+}
+
+.noSubjectsText {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+@media (max-width: 600px) {
+  .compactContainer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+    padding: 14px 16px;
+  }
+
+  .compactList {
+    flex: none;
+    width: 100%;
+    gap: 8px;
+  }
+
+  .compactTitle {
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 2px;
+  }
+
+  .manageBtn {
+    width: 100%;
+    text-align: center;
+    padding: 8px 16px !important;
+  }
+}
+

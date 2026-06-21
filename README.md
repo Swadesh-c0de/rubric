@@ -1,36 +1,61 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Rubric • Attendance & Journal Monitor
 
-## Getting Started
+Rubric is a premium, responsive web application designed for students and educators to organize academic terms, manage subjects, log daily class attendances, and keep journal entries/memos for each class session. Built with **Next.js**, **Prisma**, **SQLite**, and styled using a warm, editorial clay design system.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Key Features
+
+1. **Academic Session (Term) Management**
+   - Separate logs and analytics across semesters or academic terms.
+   - Define custom "standard class durations" per term to calculate equivalent attendance weightings for longer labs or double periods.
+2. **Subject Configuration**
+   - Create, edit, and color-code academic subjects.
+   - Live analytics including attendance rates, required class counts to reach target thresholds, and detailed warning status states.
+3. **Daily Class Logging & Calendar**
+   - Add, edit, or delete logs for classes directly via an interactive monthly calendar.
+   - Support for multiple statuses: `ATTENDED` (Present), `MISSED` (Absent), and `CANCELLED` (No Class).
+   - Add journal entries or notes describing lessons, homework, or assignments.
+   - Real-time overlap collision warnings to prevent scheduling duplicate classes at the same hour.
+4. **History Log Audit**
+   - Filter and search logs by date, subject, attendance status, or keyword queries inside memos.
+   - Toggle layouts between compact spreadsheet table views and mobile-friendly grid cards.
+   - Custom sliding detail drawer to inspect and adjust individual logs.
+5. **Secure Authentication**
+   - Built-in Next-Auth JWT authentication with encrypted password hashing.
+   - Fully isolated user spaces (all terms, logs, and subjects are sandboxed per user).
+6. **Responsive Matte Design**
+   - Beautiful dark mode utilizing a warm clay tone palette.
+   - Clean, lightweight micro-animations powered by Framer Motion.
+   - 100% responsive down to small mobile views, including a custom slider menu and scroll bars.
+
+---
+
+## Tech Stack & Architecture
+
+- **Framework:** Next.js (App Router, Turbopack enabled)
+- **Database:** SQLite
+- **ORM:** Prisma Client
+- **Authentication:** Next-Auth (Credentials Provider)
+- **Styling:** CSS Modules, Vanilla CSS variables, Lucide React Icons
+- **Animation:** Framer Motion
+
+```
+src/
+├── app/               # Next.js App Router (pages & API endpoints)
+├── components/        # Reusable UI Elements (Calendar, SubjectList, Drawers)
+├── lib/               # Utility functions (auth config, Prisma client, helpers)
+└── styles/            # Global theme variables & editorial reset
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Database Models
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Refer to the Prisma schema (`prisma/schema.prisma`):
+- **User:** Manages authentication details.
+- **Session:** Represents an academic term or semester.
+- **Subject:** Tracks individual course names, colors, and limits.
+- **AttendanceRecord:** Stores class log dates, duration/timing, status, and journal memos.
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---

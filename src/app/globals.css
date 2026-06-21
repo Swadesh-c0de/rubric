@@ -1,49 +1,204 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Fonts */
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: 'Playfair Display', Georgia, serif;
+
+  /* HSL Colors - Warm Editorial Clay Palette */
+  --bg-primary-hsl: 24, 6%, 10%; /* Warm Charcoal Clay (#1a1918) */
+  --bg-secondary-hsl: 24, 8%, 7%; /* Sand Black (#121111) */
+  --card-bg-hsl: 24, 4%, 14%; /* Sand Graphite (#242221) */
+  --card-border-hsl: 24, 4%, 20%;
+  
+  --text-primary-hsl: 40, 25%, 98%; /* Warm Cream (#fcfaf6) */
+  --text-secondary-hsl: 24, 6%, 59%; /* Soft Clay Muted (#9d9691) */
+  --text-muted-hsl: 24, 4%, 39%; /* Muted Gray-Brown (#6b6662) */
+  
+  --accent-primary-hsl: 14, 53%, 56%; /* Terracotta Orange (#c96f53) */
+  --accent-secondary-hsl: 107, 11%, 51%; /* Sage Green (#7a8f75) */
+  --accent-success-hsl: 107, 11%, 51%;
+  --accent-danger-hsl: 8, 51%, 48%; /* Rust Red (#b84d3c) */
+  --accent-warning-hsl: 30, 52%, 64%; /* Muted Gold (#d4a373) */
+
+  /* Derived CSS Variables */
+  --bg-primary: hsl(var(--bg-primary-hsl));
+  --bg-secondary: hsl(var(--bg-secondary-hsl));
+  --card-bg: hsl(var(--card-bg-hsl));
+  --card-border: rgba(255, 255, 255, 0.05); /* Very thin elegant border */
+  
+  --text-primary: hsl(var(--text-primary-hsl));
+  --text-secondary: hsl(var(--text-secondary-hsl));
+  --text-muted: hsl(var(--text-muted-hsl));
+  
+  --accent-primary: hsl(var(--accent-primary-hsl));
+  --accent-secondary: hsl(var(--accent-secondary-hsl));
+  --accent-success: hsl(var(--accent-success-hsl));
+  --accent-danger: hsl(var(--accent-danger-hsl));
+  --accent-warning: hsl(var(--accent-warning-hsl));
+
+  /* Matte Design shadow - Offset solid shadow, no blurs/glows */
+  --glass-bg: var(--card-bg);
+  --glass-border: var(--card-border);
+  --glass-blur: none; /* Removed blur for clean matte aesthetic */
+  --shadow-premium: 0 8px 24px rgba(0, 0, 0, 0.45), 0 2px 4px rgba(0, 0, 0, 0.2);
+
+  --radius-sm: 4px; /* Slightly sharper corners for print aesthetic */
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+  
+  --transition-fast: 0.1s ease-out;
+  --transition-normal: 0.2s ease-out;
+  --transition-slow: 0.35s ease-out;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-html {
-  height: 100%;
-}
-
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
-body {
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
+/* Reset */
 * {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+html {
+  font-size: 14px; /* Industry standard: Linear, Vercel, GitHub all use 13-14px */
 }
 
-@media (prefers-color-scheme: dark) {
+@media (max-width: 640px) {
   html {
-    color-scheme: dark;
+    font-size: 13px;
   }
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  font-family: var(--font-sans);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Thinner scrollbar on mobile */
+@media (max-width: 768px) {
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+::-webkit-scrollbar-thumb {
+  background: #363331;
+  border-radius: var(--radius-sm);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Headings pairing */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+/* Premium Card Base */
+.glass-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--shadow-premium);
+  border-radius: var(--radius-md);
+  transition: transform var(--transition-normal), border-color var(--transition-normal);
+}
+
+.glass-card:hover {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Premium Button Styling */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 0.85rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  gap: 8px;
+  outline: none;
+}
+
+.btn-primary {
+  background: var(--accent-primary);
+  color: var(--bg-secondary);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  background: hsl(var(--accent-primary-hsl), 0.9);
+  box-shadow: 0 4px 12px rgba(199, 111, 83, 0.2);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--card-border);
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: var(--text-muted);
+}
+
+/* Inputs */
+.input-field {
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  transition: all var(--transition-normal);
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  background: var(--bg-secondary);
+}
+
+.form-group {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }

@@ -1,0 +1,181 @@
+.tableCard {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-premium);
+  overflow: hidden;
+}
+
+.tableWrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.table th {
+  background: var(--bg-secondary);
+  padding: 16px 20px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--card-border);
+}
+
+.table td {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--card-border);
+  color: var(--text-primary);
+  vertical-align: middle;
+  transition: all var(--transition-fast);
+}
+
+.tableRow {
+  cursor: pointer;
+  position: relative;
+  transition: background-color var(--transition-fast);
+}
+
+.tableRow:hover {
+  background-color: rgba(255, 255, 255, 0.015);
+}
+
+.tableRow:hover td {
+  color: var(--text-primary);
+}
+
+.dateCol {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.calendarIcon {
+  color: var(--text-muted);
+}
+
+.subjectCol {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+}
+
+.subjectName {
+  color: var(--text-primary);
+}
+
+.colorDot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+.timeCol {
+  white-space: nowrap;
+}
+
+.timeTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--card-border);
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.statusAttended {
+  background: rgba(122, 143, 117, 0.1);
+  color: var(--accent-success);
+  border: 1px solid rgba(122, 143, 117, 0.2);
+}
+
+.statusMissed {
+  background: rgba(184, 77, 60, 0.1);
+  color: var(--accent-danger);
+  border: 1px solid rgba(184, 77, 60, 0.2);
+}
+
+.statusCancelled {
+  background: rgba(212, 163, 115, 0.1);
+  color: var(--accent-warning);
+  border: 1px solid rgba(212, 163, 115, 0.2);
+}
+
+.notesCol {
+  max-width: 280px;
+}
+
+.noteBox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-secondary);
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--card-border);
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.noteText {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.noteIcon {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.emptyNote {
+  color: var(--text-muted);
+}
+
+.deleteBtn {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.deleteBtn:hover {
+  color: var(--accent-danger);
+  background: rgba(184, 77, 60, 0.1);
+  border-color: rgba(184, 77, 60, 0.2);
+}
