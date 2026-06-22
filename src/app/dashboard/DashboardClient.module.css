@@ -186,15 +186,33 @@
   display: grid;
   grid-template-columns: minmax(320px, 440px) 1fr;
   gap: 20px;
-  align-items: start;
 }
 
-.subjectsSectionTop,
-.calendarSection,
+.subjectsSectionTop {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.calendarSection {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  height: 100%;
+}
+
 .loggerSection {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  max-width: 580px;
+  width: 100%;
+  height: 100%;
+}
+
+.loggedClassesRow {
+  width: 100%;
+  margin-top: 10px;
 }
 
 /* ── Stat Cards ──────────────────────────────────────── */

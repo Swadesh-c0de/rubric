@@ -4,6 +4,7 @@
   border: 1px solid var(--glass-border);
   box-shadow: var(--shadow-premium);
   border-radius: var(--radius-md);
+  height: 100%;
 }
 
 .header {

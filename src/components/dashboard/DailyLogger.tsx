@@ -1,10 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Calendar as CalendarIcon, Clock, FileText, Trash2, PlusCircle, AlertCircle } from "lucide-react";
+import { Calendar as CalendarIcon, Clock, PlusCircle, AlertCircle } from "lucide-react";
 import CustomSelect from "@/components/CustomSelect";
 import styles from "./DailyLogger.module.css";
-import { getRecordWeight } from "@/lib/attendance";
 
 interface Subject {
   id: string;
@@ -32,7 +31,6 @@ interface DailyLoggerProps {
     notes: string,
     classTiming: string
   ) => Promise<void>;
-  onDeleteAttendance: (recordId: string) => Promise<void>;
   standardClassDuration: number;
 }
 
@@ -67,7 +65,6 @@ export default function DailyLogger({
   subjects,
   records,
   onLogAttendance,
-  onDeleteAttendance,
   standardClassDuration,
 }: DailyLoggerProps) {
   // Form states
@@ -367,83 +364,6 @@ export default function DailyLogger({
               {isSubmitting ? "Logging…" : "Log Class Attendance"}
             </button>
           </form>
-
-          {/* ── LOGGED CLASSES FOR THIS DAY ── */}
-          <div className={styles.logsListContainer}>
-            <h5 className={styles.sectionTitle}>
-              Logged Classes
-              {dayRecords.length > 0 && (
-                <span className={styles.logCount}>{dayRecords.length}</span>
-              )}
-            </h5>
-
-            {dayRecords.length === 0 ? (
-              <p className={styles.noLogsText}>No classes logged for this date.</p>
-            ) : (
-              <div className={styles.ledgerList}>
-                {dayRecords.map((rec) => {
-                  const sub = subjects.find((s) => s.id === rec.subjectId);
-                  if (!sub) return null;
-
-                  return (
-                    <div key={rec.id} className={styles.ledgerItem}>
-                      <div className={styles.ledgerMain}>
-                        <div className={styles.ledgerMeta}>
-                          <span
-                            className={styles.colorDot}
-                            style={{ backgroundColor: sub.colorCode }}
-                          />
-                          <span className={styles.ledgerSubName}>{sub.name}</span>
-                          {rec.classTiming && (() => {
-                            const weight = getRecordWeight(rec.classTiming, rec.status, standardClassDuration);
-                            return (
-                              <span className={styles.ledgerTime}>
-                                <Clock size={11} /> {rec.classTiming}
-                                {weight > 0 && (
-                                  <strong className={styles.ledgerWeight}> ({weight} class{weight !== 1 ? "es" : ""})</strong>
-                                )}
-                              </span>
-                            );
-                          })()}
-                        </div>
-                        <span
-                          className={`${styles.statusIndicator} ${
-                            rec.status === "ATTENDED"
-                              ? styles.statusAttended
-                              : rec.status === "MISSED"
-                              ? styles.statusMissed
-                              : styles.statusCancelled
-                          }`}
-                        >
-                          {rec.status === "ATTENDED"
-                            ? "Present"
-                            : rec.status === "MISSED"
-                            ? "Absent"
-                            : "No Class"}
-                        </span>
-                      </div>
-
-                      {rec.notes && (
-                        <div className={styles.ledgerNotes}>
-                          <FileText size={12} />
-                          <span>{rec.notes}</span>
-                        </div>
-                      )}
-
-                      <button
-                        type="button"
-                        onClick={() => onDeleteAttendance(rec.id)}
-                        className={styles.deleteBtn}
-                        title="Delete log"
-                      >
-                        <Trash2 size={13} />
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
         </div>
       )}
     </div>

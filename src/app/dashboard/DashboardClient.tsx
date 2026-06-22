@@ -10,6 +10,7 @@ import {
 import SubjectList from "@/components/dashboard/SubjectList";
 import Calendar from "@/components/dashboard/Calendar";
 import DailyLogger from "@/components/dashboard/DailyLogger";
+import LoggedClasses from "@/components/dashboard/LoggedClasses";
 import CustomSelect from "@/components/CustomSelect";
 import styles from "./DashboardClient.module.css";
 
@@ -48,7 +49,7 @@ export default function DashboardClient({ user }: DashboardClientProps) {
   const [sessions, setSessions] = useState<Session[]>([]);
   const [activeSession, setActiveSession] = useState<Session | null>(null);
   const [sessionName, setSessionName] = useState("");
-  const [sessionDuration, setSessionDuration] = useState<number>(50);
+  const [sessionDuration, setSessionDuration] = useState<number>(60);
 
   // Subject States
   const [subjects, setSubjects] = useState<Subject[]>([]);
@@ -360,12 +361,12 @@ export default function DashboardClient({ user }: DashboardClientProps) {
                 min={1}
                 max={300}
                 className="input-field"
-                placeholder="e.g. 50"
+                placeholder="e.g. 60"
                 value={sessionDuration}
                 onChange={(e) => setSessionDuration(Math.max(1, parseInt(e.target.value, 10) || 0))}
               />
               <span style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "4px", display: "block" }}>
-                Define the length of a single class period (e.g., 50 min) to calculate weight for longer logs.
+                Define the length of a single class period (e.g., 60 min) to calculate weight for longer logs.
               </span>
             </div>
 
@@ -455,7 +456,7 @@ export default function DashboardClient({ user }: DashboardClientProps) {
           setSubjectColor={setSubjectColor}
           onSubmitSubject={handleCreateSubject}
           error={error}
-          standardClassDuration={activeSession?.standardClassDuration || 50}
+          standardClassDuration={activeSession?.standardClassDuration || 60}
           onDeleteSubject={handleDeleteSubject}
           onEditSubject={handleEditSubject}
         />
@@ -480,10 +481,19 @@ export default function DashboardClient({ user }: DashboardClientProps) {
             subjects={subjects}
             records={records}
             onLogAttendance={handleCreateClassLog}
-            onDeleteAttendance={handleDeleteClassLog}
-            standardClassDuration={activeSession?.standardClassDuration || 50}
+            standardClassDuration={activeSession?.standardClassDuration || 60}
           />
         </div>
+      </div>
+
+      <div className={styles.loggedClassesRow}>
+        <LoggedClasses
+          selectedDate={selectedDate}
+          subjects={subjects}
+          records={records}
+          onDeleteAttendance={handleDeleteClassLog}
+          standardClassDuration={activeSession?.standardClassDuration || 60}
+        />
       </div>
     </div>
   );

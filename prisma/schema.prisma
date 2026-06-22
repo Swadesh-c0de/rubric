@@ -17,16 +17,18 @@ model User {
 }
 
 model Session {
-  id        String    @id @default(uuid())
-  name      String
-  startDate DateTime
-  endDate   DateTime
-  userId    String
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                    String    @id @default(uuid())
+  name                  String
+  startDate             DateTime
+  endDate               DateTime
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   subjects              Subject[]
   standardClassDuration Int       @default(50)
   createdAt             DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
 }
 
 model Subject {
@@ -38,6 +40,8 @@ model Subject {
   attendanceRecords  AttendanceRecord[]
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
+
+  @@index([sessionId])
 }
 
 model AttendanceRecord {
@@ -52,4 +56,6 @@ model AttendanceRecord {
   updatedAt   DateTime @updatedAt
 
   @@index([date])
+  @@index([subjectId])
 }
+
