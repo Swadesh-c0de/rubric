@@ -1,7 +1,7 @@
 "use client";
 /* eslint-disable react-hooks/set-state-in-effect */
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { AnimatePresence } from "framer-motion";
 import { Search, FileText, LayoutGrid, List } from "lucide-react";
 import styles from "./HistoryClient.module.css";
@@ -38,38 +38,32 @@ interface HistoryClientProps {
     name: string;
     email: string;
   };
+  initialSessions: Session[];
+  initialSubjects: Subject[];
+  initialRecords: AttendanceRecord[];
 }
 
-export default function HistoryClient({ user }: HistoryClientProps) {
-  const [sessions, setSessions] = useState<Session[]>([]);
-  const [activeSession, setActiveSession] = useState<Session | null>(null);
-  const [subjects, setSubjects] = useState<Subject[]>([]);
-  const [records, setRecords] = useState<AttendanceRecord[]>([]);
+export default function HistoryClient({
+  user,
+  initialSessions,
+  initialSubjects,
+  initialRecords,
+}: HistoryClientProps) {
+  const [sessions] = useState<Session[]>(initialSessions);
+  const [activeSession, setActiveSession] = useState<Session | null>(
+    initialSessions.length > 0 ? initialSessions[0] : null
+  );
+  const [subjects, setSubjects] = useState<Subject[]>(initialSubjects);
+  const [records, setRecords] = useState<AttendanceRecord[]>(initialRecords);
 
   const [filterSubject, setFilterSubject] = useState("ALL");
   const [filterStatus, setFilterStatus] = useState("ALL");
   const [searchTerm, setSearchTerm] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [viewMode, setViewMode] = useState<"table" | "grid">("table");
   const [selectedRecord, setSelectedRecord] = useState<AttendanceRecord | null>(null);
 
-  const fetchSessions = useCallback(async () => {
-    try {
-      const res = await fetch("/api/sessions");
-      if (res.ok) {
-        const data = await res.json();
-        setSessions(data);
-        if (data.length > 0) {
-          setActiveSession(data[0]);
-        } else {
-          setLoading(false);
-        }
-      }
-    } catch (err) {
-      console.error(err);
-      setLoading(false);
-    }
-  }, []);
+  const isInitialMount = useRef(true);
 
   const fetchHistoryData = useCallback(async (sessionId: string) => {
     setLoading(true);
@@ -113,10 +107,10 @@ export default function HistoryClient({ user }: HistoryClientProps) {
   };
 
   useEffect(() => {
-    fetchSessions();
-  }, [fetchSessions]);
-
-  useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
     if (activeSession) {
       fetchHistoryData(activeSession.id);
     }
@@ -147,7 +141,7 @@ export default function HistoryClient({ user }: HistoryClientProps) {
     return timeA.localeCompare(timeB);
   });
 
-  if (loading) {
+  if (loading && sessions.length === 0) {
     return (
       <div className={styles.loading}>
         <div className="spinner" />

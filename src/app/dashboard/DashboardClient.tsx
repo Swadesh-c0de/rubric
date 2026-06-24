@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import {
   Calendar as CalendarIcon,
@@ -42,48 +42,42 @@ interface DashboardClientProps {
     name: string;
     email: string;
   };
+  initialSessions: Session[];
+  initialSubjects: Subject[];
+  initialRecords: AttendanceRecord[];
 }
 
-export default function DashboardClient({ user }: DashboardClientProps) {
+export default function DashboardClient({
+  user,
+  initialSessions,
+  initialSubjects,
+  initialRecords,
+}: DashboardClientProps) {
   // Session States
-  const [sessions, setSessions] = useState<Session[]>([]);
-  const [activeSession, setActiveSession] = useState<Session | null>(null);
+  const [sessions, setSessions] = useState<Session[]>(initialSessions);
+  const [activeSession, setActiveSession] = useState<Session | null>(
+    initialSessions.length > 0 ? initialSessions[0] : null
+  );
   const [sessionName, setSessionName] = useState("");
   const [sessionDuration, setSessionDuration] = useState<number>(60);
 
   // Subject States
-  const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [subjects, setSubjects] = useState<Subject[]>(initialSubjects);
   const [subjectName, setSubjectName] = useState("");
   const [subjectColor, setSubjectColor] = useState("#7c3aed");
   const [isAddSubjectOpen, setIsAddSubjectOpen] = useState(false);
 
   // Attendance & Calendar States
-  const [records, setRecords] = useState<AttendanceRecord[]>([]);
+  const [records, setRecords] = useState<AttendanceRecord[]>(initialRecords);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
 
   // UI States
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [isCreateSessionOpen, setIsCreateSessionOpen] = useState(false);
 
-  const fetchSessions = async () => {
-    try {
-      const res = await fetch("/api/sessions");
-      if (res.ok) {
-        const data = await res.json();
-        setSessions(data);
-        if (data.length > 0) {
-          setActiveSession(data[0]);
-        } else {
-          setLoading(false);
-        }
-      }
-    } catch {
-      setError("Failed to load sessions");
-      setLoading(false);
-    }
-  };
+  const isInitialMount = useRef(true);
 
   const fetchSubjectsAndRecords = async (sessionId: string | null) => {
     if (!sessionId) {
@@ -113,14 +107,6 @@ export default function DashboardClient({ user }: DashboardClientProps) {
     }
   };
 
-  // Fetch initial sessions
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      fetchSessions();
-    }, 0);
-    return () => clearTimeout(timer);
-  }, []);
-
   // Listen for new session event dispatched from AccountPanel
   useEffect(() => {
     const handler = () => setIsCreateSessionOpen(true);
@@ -130,6 +116,10 @@ export default function DashboardClient({ user }: DashboardClientProps) {
 
   // Fetch subjects and records when activeSession changes
   useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
     const timer = setTimeout(() => {
       fetchSubjectsAndRecords(activeSession?.id || null);
     }, 0);

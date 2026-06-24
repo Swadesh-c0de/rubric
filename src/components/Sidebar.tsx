@@ -40,7 +40,7 @@ export default function Sidebar({ user }: SidebarProps) {
       {/* Backdrop for Mobile */}
       {isOpen && <div className={styles.backdrop} onClick={toggleSidebar} />}
 
-      <aside className={`${styles.sidebar} ${isOpen ? styles.open : ""}`}>
+      <aside className={`${styles.sidebar} ${isOpen ? styles.open : ""}`} style={{ viewTransitionName: "app-sidebar" }}>
         <div className={styles.brand}>
           <div className={styles.brandLogo}>
             <svg className={styles.logoBracket} width="10" height="26" viewBox="0 0 12 32" fill="currentColor">

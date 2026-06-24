@@ -1,7 +1,6 @@
 "use client";
-/* eslint-disable react-hooks/set-state-in-effect */
 
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
 import { signOut } from "next-auth/react";
 import {
   User,
@@ -30,11 +29,12 @@ interface AccountClientProps {
     name: string;
     email: string;
   };
+  initialSessions: Session[];
 }
 
 type SettingsTab = "profile" | "security" | "sessions" | "danger";
 
-export default function AccountClient({ user }: AccountClientProps) {
+export default function AccountClient({ user, initialSessions }: AccountClientProps) {
   const [activeTab, setActiveTab] = useState<SettingsTab>("profile");
 
   // Form states
@@ -50,32 +50,13 @@ export default function AccountClient({ user }: AccountClientProps) {
   const [newSessionDuration, setNewSessionDuration] = useState(60);
 
   // Session list states
-  const [sessions, setSessions] = useState<Session[]>([]);
-  const [sessionsLoading, setSessionsLoading] = useState(false);
+  const [sessions, setSessions] = useState<Session[]>(initialSessions);
+  const sessionsLoading = false;
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   // UI status states
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
-
-  const fetchSessions = useCallback(async () => {
-    setSessionsLoading(true);
-    try {
-      const res = await fetch("/api/sessions");
-      if (res.ok) {
-        const data = await res.json();
-        setSessions(data);
-      }
-    } catch {
-      // silently ignore
-    } finally {
-      setSessionsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchSessions();
-  }, [fetchSessions]);
 
   const clearMessage = () => setMessage(null);
 
