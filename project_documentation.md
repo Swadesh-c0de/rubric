@@ -85,34 +85,34 @@ When a user logs a class, the application executes multi-stage validation checks
 
 ```mermaid
 flowchart TD
-    Start[User Clicks 'Log Class'] --> Val1{Is Status 'CANCELLED'?}
+    Start["User Clicks 'Log Class'"] --> Val1{"Is Status 'CANCELLED'?"}
     
-    Val1 -->|Yes| Commit[Commit to DB via Prisma]
+    Val1 -->|Yes| Commit["Commit to DB via Prisma"]
     
-    Val1 -->|No| Val2{Are Start & End Times Entered?}
-    Val2 -->|No| Error1[Show Error: Times Required]
+    Val1 -->|No| Val2{"Are Start & End Times Entered?"}
+    Val2 -->|No| Error1["Show Error: Times Required"]
     
-    Val2 -->|Yes| Val3{Is End Time > Start Time?}
-    Val3 -->|No| Error2[Show Error: End must be after Start]
+    Val2 -->|Yes| Val3{"Is End Time > Start Time?"}
+    Val3 -->|No| Error2["Show Error: End must be after Start"]
     
-    Val3 -->|Yes| Val4{Is Duration <= 5 Hours?}
-    Val4 -->|No| Error3[Show Error: Cannot exceed 5 hours]
+    Val3 -->|Yes| Val4{"Is Duration <= 5 Hours?"}
+    Val4 -->|No| Error3["Show Error: Cannot exceed 5 hours"]
     
-    Val4 -->|Yes| Val5{Are there overlapping classes on this day?}
+    Val4 -->|Yes| Val5{"Are there overlapping classes on this day?"}
     Val5 -.- OverlapMath["Overlap Math: newStart < extEnd && extStart < newEnd"]
     
-    Val5 -->|Yes| Error4[Show Error: Time slot overlaps with existing class]
+    Val5 -->|Yes| Error4["Show Error: Time slot overlaps with existing class"]
     
-    Val5 -->|No| CalcWeight[Calculate Class Weight: Math.round(Duration / StandardDuration)]
-    CalcWeight --> CheckOverride{User Custom Override?}
+    Val5 -->|No| CalcWeight["Calculate Class Weight: Math.round(Duration / StandardDuration)"]
+    CalcWeight --> CheckOverride{"User Custom Override?"}
     
-    CheckOverride -->|Yes| ApplyOverride[Apply Custom Weight Suffix |w:X]
-    CheckOverride -->|No| ApplyCalc[Apply Calculated Weight Suffix]
+    CheckOverride -->|Yes| ApplyOverride["Apply Custom Weight Suffix |w:X"]
+    CheckOverride -->|No| ApplyCalc["Apply Calculated Weight Suffix"]
     
     ApplyOverride --> Commit
     ApplyCalc --> Commit
     
-    Commit --> Success[Reactively Update Local State & Close Modal]
+    Commit --> Success["Reactively Update Local State & Close Modal"]
 ```
 
 ---
