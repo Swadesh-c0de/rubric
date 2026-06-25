@@ -99,7 +99,7 @@ flowchart TD
     Val4 -->|No| Error3[Show Error: Cannot exceed 5 hours]
     
     Val4 -->|Yes| Val5{Are there overlapping classes on this day?}
-    Note over Val5: Overlap Math: newStart < extEnd && extStart < newEnd
+    Val5 -.- OverlapMath["Overlap Math: newStart < extEnd && extStart < newEnd"]
     
     Val5 -->|Yes| Error4[Show Error: Time slot overlaps with existing class]
     
