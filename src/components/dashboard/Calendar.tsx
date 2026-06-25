@@ -33,7 +33,7 @@ export default function Calendar({
   subjects,
   records,
 }: CalendarProps) {
-  
+
   const isSameDay = (d1: Date, d2: Date) => {
     return (
       d1.getFullYear() === d2.getFullYear() &&
@@ -78,7 +78,7 @@ export default function Calendar({
             {dayRecords.slice(0, 4).map((r) => {
               const sub = subjects.find((s) => s.id === r.subjectId);
               if (!sub) return null;
-              
+
               let dotBg = "var(--text-muted)";
               if (r.status === "ATTENDED") {
                 dotBg = sub.colorCode;

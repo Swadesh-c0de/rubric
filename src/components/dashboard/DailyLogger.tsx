@@ -218,7 +218,15 @@ export default function DailyLogger({
       </div>
 
       {subjects.length === 0 ? (
-        <p className={styles.emptyText}>Add subjects first to begin logging classes.</p>
+        <div className={styles.emptyContainer}>
+          <div className={styles.emptyIconContainer}>
+            <CalendarIcon size={32} className={styles.emptyIcon} />
+          </div>
+          <h4 className={styles.emptyTitle}>No Subjects Found</h4>
+          <p className={styles.emptyText}>
+            Add subjects first in the panel above to begin logging your class attendance.
+          </p>
+        </div>
       ) : (
         <div className={styles.contentContainer}>
           {/* ── LOG ENTRY FORM ── */}

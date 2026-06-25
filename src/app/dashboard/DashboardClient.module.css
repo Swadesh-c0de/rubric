@@ -184,7 +184,7 @@
 /* ── Main 2-col Grid ─────────────────────────────────── */
 .dashboardContentGrid {
   display: grid;
-  grid-template-columns: minmax(320px, 440px) 1fr;
+  grid-template-columns: minmax(320px, 510px) 1fr;
   gap: 20px;
 }
 
