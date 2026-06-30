@@ -1,9 +1,20 @@
-export function toISODateString(dateStr: string): string {
-  const d = new Date(dateStr);
+export function toISODateString(dateInput: Date | string): string {
+  const d = typeof dateInput === "string" ? new Date(dateInput) : dateInput;
+  const y = d.getUTCFullYear();
+  const m = String(d.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(d.getUTCDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+export function toLocalYYYYMMDD(d: Date): string {
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, "0");
   const day = String(d.getDate()).padStart(2, "0");
   return `${y}-${m}-${day}`;
+}
+
+export function toUtcYYYYMMDD(d: Date | string): string {
+  return toISODateString(d);
 }
 
 export function to24Hour(time12: string): string {
@@ -33,5 +44,7 @@ export function formatDate(dateStr: string): string {
     year: "numeric",
     month: "short",
     day: "numeric",
+    timeZone: "UTC",
   });
 }
+

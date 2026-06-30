@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import styles from "./HistoryDrawer.module.css";
 import CustomSelect from "@/components/CustomSelect";
 import { getRecordWeight, parseTimingRange, parseTimeToMinutes } from "@/lib/attendance";
-import { formatDate, to24Hour, to12Hour, toISODateString } from "@/lib/datetime";
+import { formatDate, to24Hour, to12Hour, toISODateString, toUtcYYYYMMDD } from "@/lib/datetime";
 
 interface Session {
   id: string;
@@ -108,16 +108,11 @@ export default function HistoryDrawer({
     if (newStartMinutes >= newEndMinutes) return "End time must be after start time";
 
     // Compare with existing records on the same day (excluding the record being edited)
-    const targetDate = new Date(dateStr);
     const overlap = records.find((rec) => {
       if (rec.id === recordId) return false;
       if (rec.status === "CANCELLED" || !rec.classTiming) return false;
 
-      const recDate = new Date(rec.date);
-      const isSameDay =
-        recDate.getFullYear() === targetDate.getFullYear() &&
-        recDate.getMonth() === targetDate.getMonth() &&
-        recDate.getDate() === targetDate.getDate();
+      const isSameDay = toUtcYYYYMMDD(rec.date) === toUtcYYYYMMDD(dateStr);
 
       if (!isSameDay) return false;
 
@@ -191,7 +186,7 @@ export default function HistoryDrawer({
         body: JSON.stringify({
           id: selectedRecord.id,
           subjectId: editSubjectId,
-          date: new Date(editDate).toISOString(),
+          date: editDate,
           status: editStatus,
           notes: editNotes || null,
           classTiming,

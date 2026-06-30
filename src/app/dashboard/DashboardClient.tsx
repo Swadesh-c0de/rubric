@@ -13,6 +13,7 @@ import DailyLogger from "@/components/dashboard/DailyLogger";
 import LoggedClasses from "@/components/dashboard/LoggedClasses";
 import CustomSelect from "@/components/CustomSelect";
 import styles from "./DashboardClient.module.css";
+import { toLocalYYYYMMDD } from "@/lib/datetime";
 
 interface Session {
   id: string;
@@ -248,7 +249,7 @@ export default function DashboardClient({
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         subjectId,
-        date: date.toISOString(),
+        date: toLocalYYYYMMDD(date),
         status,
         notes: notes || null,
         classTiming: classTiming || null,
@@ -291,11 +292,11 @@ export default function DashboardClient({
     }
   };
 
-  const isSameDay = (d1: Date, d2: Date) => {
+  const isSameDay = (dbDate: Date, localDate: Date) => {
     return (
-      d1.getFullYear() === d2.getFullYear() &&
-      d1.getMonth() === d2.getMonth() &&
-      d1.getDate() === d2.getDate()
+      dbDate.getUTCFullYear() === localDate.getFullYear() &&
+      dbDate.getUTCMonth() === localDate.getMonth() &&
+      dbDate.getUTCDate() === localDate.getDate()
     );
   };
 

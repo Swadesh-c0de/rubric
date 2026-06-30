@@ -29,11 +29,7 @@ export async function GET(req: Request) {
     }
 
     if (dateStr) {
-      const startOfDay = new Date(dateStr);
-      startOfDay.setHours(0, 0, 0, 0);
-
-      const endOfDay = new Date(dateStr);
-      endOfDay.setHours(23, 59, 59, 999);
+      const { start: startOfDay, end: endOfDay } = parseToUtcBounds(dateStr);
 
       // Fetch all subjects for the session
       const subjects = await prisma.subject.findMany({
@@ -71,6 +67,29 @@ export async function GET(req: Request) {
     console.error("GET /api/attendance error:", error);
     return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
   }
+}
+
+function parseToUtcBounds(dateStr: string): { start: Date; end: Date; target: Date } {
+  let year: number;
+  let month: number;
+  let day: number;
+
+  if (dateStr.includes("-")) {
+    const parts = dateStr.split("T")[0].split("-");
+    year = parseInt(parts[0], 10);
+    month = parseInt(parts[1], 10) - 1;
+    day = parseInt(parts[2], 10);
+  } else {
+    const d = new Date(dateStr);
+    year = d.getUTCFullYear();
+    month = d.getUTCMonth();
+    day = d.getUTCDate();
+  }
+
+  const start = new Date(Date.UTC(year, month, day, 0, 0, 0, 0));
+  const end = new Date(Date.UTC(year, month, day, 23, 59, 59, 999));
+  const target = new Date(Date.UTC(year, month, day, 0, 0, 0, 0));
+  return { start, end, target };
 }
 
 function parseTimeToMinutes(timeStr: string): number | null {
@@ -129,11 +148,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Subject not found" }, { status: 404 });
     }
 
-    const targetDate = new Date(date);
-    const startOfDay = new Date(targetDate);
-    startOfDay.setHours(0, 0, 0, 0);
-    const endOfDay = new Date(targetDate);
-    endOfDay.setHours(23, 59, 59, 999);
+    const { start: startOfDay, end: endOfDay, target: targetDate } = parseToUtcBounds(date);
 
     // Get all subjects in the same session to validate overlaps across all session classes
     const subjectsInSession = await prisma.subject.findMany({
@@ -323,11 +338,7 @@ export async function PUT(req: Request) {
       return NextResponse.json({ error: "Selected subject not found" }, { status: 404 });
     }
 
-    const targetDate = new Date(date);
-    const startOfDay = new Date(targetDate);
-    startOfDay.setHours(0, 0, 0, 0);
-    const endOfDay = new Date(targetDate);
-    endOfDay.setHours(23, 59, 59, 999);
+    const { start: startOfDay, end: endOfDay, target: targetDate } = parseToUtcBounds(date);
 
     // Get all subjects in the same session to validate overlaps across all session classes
     const subjectsInSession = await prisma.subject.findMany({

@@ -34,10 +34,10 @@ export default function LoggedClasses({
   onDeleteAttendance,
   standardClassDuration,
 }: LoggedClassesProps) {
-  const isSameDay = (d1: Date, d2: Date) =>
-    d1.getFullYear() === d2.getFullYear() &&
-    d1.getMonth() === d2.getMonth() &&
-    d1.getDate() === d2.getDate();
+  const isSameDay = (dbDate: Date, localDate: Date) =>
+    dbDate.getUTCFullYear() === localDate.getFullYear() &&
+    dbDate.getUTCMonth() === localDate.getMonth() &&
+    dbDate.getUTCDate() === localDate.getDate();
 
   const formatDate = (date: Date) =>
     date.toLocaleDateString("en-US", {

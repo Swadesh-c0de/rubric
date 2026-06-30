@@ -2,6 +2,7 @@
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import styles from "./Calendar.module.css";
+import { toLocalYYYYMMDD, toUtcYYYYMMDD } from "@/lib/datetime";
 
 interface Subject {
   id: string;
@@ -34,14 +35,6 @@ export default function Calendar({
   records,
 }: CalendarProps) {
 
-  const isSameDay = (d1: Date, d2: Date) => {
-    return (
-      d1.getFullYear() === d2.getFullYear() &&
-      d1.getMonth() === d2.getMonth() &&
-      d1.getDate() === d2.getDate()
-    );
-  };
-
   const getDaysInMonth = (date: Date) => {
     return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
   };
@@ -63,9 +56,9 @@ export default function Calendar({
     // Month days
     for (let day = 1; day <= daysInMonth; day++) {
       const dayDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day);
-      const isSelected = isSameDay(dayDate, selectedDate);
-      const isToday = isSameDay(dayDate, new Date());
-      const dayRecords = records.filter((r) => isSameDay(new Date(r.date), dayDate));
+      const isSelected = toLocalYYYYMMDD(dayDate) === toLocalYYYYMMDD(selectedDate);
+      const isToday = toLocalYYYYMMDD(dayDate) === toLocalYYYYMMDD(new Date());
+      const dayRecords = records.filter((r) => toUtcYYYYMMDD(r.date) === toLocalYYYYMMDD(dayDate));
 
       calendarDays.push(
         <button
