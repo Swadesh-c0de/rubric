@@ -481,5 +481,152 @@
     text-align: center;
     padding: 8px 16px !important;
   }
+
+  .compactRightControls {
+    width: 100%;
+    justify-content: space-between;
+    margin-top: 4px;
+  }
 }
+
+.compactRightControls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.targetWrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--glass-border);
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+}
+
+.targetWrapper:focus-within {
+  border-color: var(--accent-primary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.targetLabel {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.targetInput {
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 0.8rem;
+  font-weight: 700;
+  width: 28px;
+  text-align: center;
+  padding: 0;
+  outline: none;
+  font-family: var(--font-sans);
+}
+
+.targetInput::-webkit-outer-spin-button,
+.targetInput::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+}
+
+.targetInput[type=number] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.targetPercentSign {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+/* Projection display inside the subject card */
+.projectionContainer {
+  margin-top: 2px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 0.78rem;
+  line-height: 1.35;
+  transition: all var(--transition-normal);
+  border-left: 3px solid transparent;
+}
+
+.projectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.projIcon {
+  flex-shrink: 0;
+}
+
+.projTitle {
+  font-weight: 700;
+}
+
+.projSubtext {
+  font-size: 0.72rem;
+  opacity: 0.8;
+}
+
+/* Projection Status Variants matching warm color palette */
+.projDanger {
+  background: rgba(184, 77, 60, 0.06);
+  border: 1px solid rgba(184, 77, 60, 0.15);
+  border-left-color: var(--accent-danger);
+}
+
+.projDanger .projIcon,
+.projDanger .projTitle {
+  color: var(--accent-danger);
+}
+
+.projDanger .projSubtext {
+  color: var(--text-secondary);
+}
+
+.projSuccess {
+  background: rgba(122, 143, 117, 0.06);
+  border: 1px solid rgba(122, 143, 117, 0.15);
+  border-left-color: var(--accent-success);
+}
+
+.projSuccess .projIcon,
+.projSuccess .projTitle {
+  color: var(--accent-success);
+}
+
+.projSuccess .projSubtext {
+  color: var(--text-secondary);
+}
+
+.projNeutral {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--glass-border);
+  border-left-color: var(--text-muted);
+}
+
+.projNeutral .projIcon,
+.projNeutral .projTitle {
+  color: var(--text-secondary);
+}
+
+.projNeutral .projSubtext {
+  color: var(--text-muted);
+}
+
 

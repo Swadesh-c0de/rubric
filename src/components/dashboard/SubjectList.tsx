@@ -1,8 +1,7 @@
 "use client";
-
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, BookOpen, Trash2, Edit2 } from "lucide-react";
+import { Plus, BookOpen, Trash2, Edit2, AlertCircle, CheckCircle2 } from "lucide-react";
 import styles from "./SubjectList.module.css";
 import { getRecordWeight } from "@/lib/attendance";
 
@@ -54,24 +53,70 @@ export default function SubjectList({
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
   const [editColor, setEditColor] = useState("");
+  const [targetPercent, setTargetPercent] = useState<number>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("rubric:target-attendance");
+      if (saved) {
+        const val = parseInt(saved, 10);
+        if (!isNaN(val) && val >= 10 && val <= 100) {
+          return val;
+        }
+      }
+    }
+    return 75;
+  });
 
-  const startEdit = (sub: Subject) => {
-    setEditingId(sub.id);
-    setEditName(sub.name);
-    setEditColor(sub.colorCode);
+  const handleTargetChange = (val: number) => {
+    const clean = Math.max(10, Math.min(100, val));
+    setTargetPercent(clean);
+    localStorage.setItem("rubric:target-attendance", clean.toString());
   };
 
-  const cancelEdit = () => {
-    setEditingId(null);
-    setEditName("");
-    setEditColor("");
+  const getProjectionInfo = (subAtt: number, subTotal: number, target: number) => {
+    if (subTotal === 0) {
+      return {
+        status: "neutral",
+        text: "No classes logged yet.",
+        subtext: "Safe to start with 0 leaves."
+      };
+    }
+
+    const currentRate = subAtt / subTotal;
+    const targetRate = target / 100;
+
+    if (currentRate < targetRate) {
+      const needed = Math.ceil((targetRate * subTotal - subAtt) / (1 - targetRate));
+      return {
+        status: "danger",
+        text: `Attend next ${needed} class${needed > 1 ? "es" : ""}`,
+        subtext: `to recover to target ${target}%`
+      };
+    } else {
+      const leaves = Math.floor((subAtt - targetRate * subTotal) / targetRate);
+      return {
+        status: "success",
+        text: leaves > 0 
+          ? `Can take ${leaves} leave${leaves > 1 ? "s" : ""} safely` 
+          : `Cannot miss any classes`,
+        subtext: leaves > 0 ? "without failing criteria" : "currently at limit"
+      };
+    }
   };
 
-  const saveEdit = async (id: string) => {
-    if (!editName.trim()) return;
-    await onEditSubject(id, editName, editColor);
-    setEditingId(null);
-  };
+  const renderTargetControls = () => (
+    <div className={styles.targetWrapper}>
+      <span className={styles.targetLabel}>Target:</span>
+      <input
+        type="number"
+        min={10}
+        max={100}
+        value={targetPercent}
+        onChange={(e) => handleTargetChange(parseInt(e.target.value, 10) || 75)}
+        className={styles.targetInput}
+      />
+      <span className={styles.targetPercentSign}>%</span>
+    </div>
+  );
 
   if (!isExpanded) {
     return (
@@ -91,11 +136,13 @@ export default function SubjectList({
                 .reduce((sum, r) => sum + getRecordWeight(r.classTiming, r.status, standardClassDuration), 0);
               const subTotal = subAtt + subMiss;
               const subRate = subTotal > 0 ? Math.round((subAtt / subTotal) * 100) : 100;
+              const projection = getProjectionInfo(subAtt, subTotal, targetPercent);
 
               return (
                 <div
                   key={sub.id}
                   className={styles.compactBadge}
+                  title={`${projection.text} ${projection.subtext}`}
                   style={{
                     borderLeft: `3px solid ${sub.colorCode}`,
                     background: `${sub.colorCode}08`
@@ -105,7 +152,7 @@ export default function SubjectList({
                   <span
                     className={styles.compactRate}
                     style={{
-                      color: subRate >= 75 ? "var(--accent-success)" : "var(--accent-danger)"
+                      color: subRate >= targetPercent ? "var(--accent-success)" : "var(--accent-danger)"
                     }}
                   >
                     {subRate}%
@@ -115,22 +162,44 @@ export default function SubjectList({
             })
           )}
         </div>
-        <button
-          onClick={() => setIsExpanded(true)}
-          className={`btn btn-secondary ${styles.manageBtn}`}
-          style={{ padding: "6px 12px", fontSize: "0.78rem", whiteSpace: "nowrap" }}
-        >
-          Manage Subjects
-        </button>
+        <div className={styles.compactRightControls}>
+          {renderTargetControls()}
+          <button
+            onClick={() => setIsExpanded(true)}
+            className={`btn btn-secondary ${styles.manageBtn}`}
+            style={{ padding: "6px 12px", fontSize: "0.78rem", whiteSpace: "nowrap" }}
+          >
+            Manage Subjects
+          </button>
+        </div>
       </div>
     );
   }
+
+  const startEdit = (sub: Subject) => {
+    setEditingId(sub.id);
+    setEditName(sub.name);
+    setEditColor(sub.colorCode);
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setEditName("");
+    setEditColor("");
+  };
+
+  const saveEdit = async (id: string) => {
+    if (!editName.trim()) return;
+    await onEditSubject(id, editName, editColor);
+    setEditingId(null);
+  };
 
   return (
     <div className={styles.container}>
       <div className={styles.header}>
         <h3>Subjects & Classes</h3>
-        <div style={{ display: "flex", gap: "8px" }}>
+        <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+          {renderTargetControls()}
           <button
             onClick={() => setIsAddSubjectOpen(!isAddSubjectOpen)}
             className="btn btn-primary"
@@ -326,10 +395,34 @@ export default function SubjectList({
                         <span>Absent:</span> <strong style={{ color: "var(--accent-danger)" }}>{subMiss}</strong>
                       </div>
                     </div>
+
+                    {/* Dynamic Forecasting Projection */}
+                    {(() => {
+                      const proj = getProjectionInfo(subAtt, subTotal, targetPercent);
+                      const isDanger = proj.status === "danger";
+                      const isSuccess = proj.status === "success";
+                      
+                      return (
+                        <div className={`${styles.projectionContainer} ${
+                          isDanger ? styles.projDanger : isSuccess ? styles.projSuccess : styles.projNeutral
+                        }`}>
+                          <div className={styles.projectionHeader}>
+                            {isDanger ? (
+                              <AlertCircle size={13} className={styles.projIcon} />
+                            ) : (
+                              <CheckCircle2 size={13} className={styles.projIcon} />
+                            )}
+                            <span className={styles.projTitle}>{proj.text}</span>
+                          </div>
+                          <span className={styles.projSubtext}>{proj.subtext}</span>
+                        </div>
+                      );
+                    })()}
+
                     <div className={styles.cardFooter}>
                       <span className={styles.footerLabel}>Status:</span>
-                      <span className={subRate >= 75 ? styles.footerVal : styles.footerValDanger}>
-                        {subRate >= 75 ? "On Track (≥75%)" : "Below Limit (<75%)"}
+                      <span className={subRate >= targetPercent ? styles.footerVal : styles.footerValDanger}>
+                        {subRate >= targetPercent ? `On Track (≥${targetPercent}%)` : `Below Limit (<${targetPercent}%)`}
                       </span>
                     </div>
                   </>
