@@ -183,12 +183,13 @@ export default function DailyLogger({
       const calculatedWeight = customWeight !== null ? customWeight : getPreviewWeight();
       const timingString = buildTimingString();
       const finalTiming = timingString ? `${timingString}|w:${calculatedWeight}` : "";
+      const cleanNotes = notes.replace(/\|\s*$/, "").trim();
 
       await onLogAttendance(
         selectedSubjectId,
         selectedDate,
         status,
-        notes,
+        cleanNotes,
         finalTiming
       );
       // Reset timing + notes on success (keep subject & status for quick multi-entry)
@@ -331,20 +332,30 @@ export default function DailyLogger({
             <div className="form-group" style={{ marginBottom: 0 }}>
               <label className="form-label">Class Notes (optional)</label>
               <div className={styles.vibeBar}>
-                {["📝 Focus", "⚡ Energy", "😴 Tired", "☕ Chill"].map((vibe) => (
-                  <button
-                    key={vibe}
-                    type="button"
-                    onClick={() => {
-                      if (!notes.includes(vibe)) {
-                        setNotes((prev) => (prev ? `${vibe} | ${prev}` : `${vibe} | `));
-                      }
-                    }}
-                    className={styles.vibeTag}
-                  >
-                    {vibe}
-                  </button>
-                ))}
+                {["📝 Focus", "⚡ Energy", "😴 Tired", "☕ Chill"].map((vibe) => {
+                  const isActive = notes.includes(vibe);
+                  return (
+                    <button
+                      key={vibe}
+                      type="button"
+                      onClick={() => {
+                        if (isActive) {
+                          const cleaned = notes
+                            .replace(`${vibe} | `, "")
+                            .replace(`${vibe} |`, "")
+                            .replace(vibe, "")
+                            .trim();
+                          setNotes(cleaned);
+                        } else {
+                          setNotes((prev) => (prev.trim() ? `${vibe} | ${prev.trim()}` : `${vibe} | `));
+                        }
+                      }}
+                      className={`${styles.vibeTag} ${isActive ? styles.vibeTagActive : ""}`}
+                    >
+                      {vibe}
+                    </button>
+                  );
+                })}
               </div>
               <textarea
                 placeholder="Lesson summary, homework, how the class felt..."

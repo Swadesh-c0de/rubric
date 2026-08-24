@@ -108,12 +108,11 @@ export default function DashboardClient({
     }
   };
 
-  // Listen for new session event dispatched from AccountPanel
-  useEffect(() => {
-    const handler = () => setIsCreateSessionOpen(true);
-    window.addEventListener("rubric:new-session", handler);
-    return () => window.removeEventListener("rubric:new-session", handler);
-  }, []);
+  const handleJumpToToday = () => {
+    const today = new Date();
+    setSelectedDate(today);
+    setCurrentMonth(new Date(today.getFullYear(), today.getMonth(), 1));
+  };
 
   // Fetch subjects and records when activeSession changes
   useEffect(() => {
@@ -461,6 +460,7 @@ export default function DashboardClient({
             selectedDate={selectedDate}
             setSelectedDate={setSelectedDate}
             navigateMonth={navigateMonth}
+            onJumpToToday={handleJumpToToday}
             subjects={subjects}
             records={records}
           />

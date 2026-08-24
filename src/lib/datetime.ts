@@ -19,7 +19,8 @@ export function toUtcYYYYMMDD(d: Date | string): string {
 
 export function to24Hour(time12: string): string {
   if (!time12) return "";
-  const match = time12.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+  const cleanTime = time12.split("|")[0].trim();
+  const match = cleanTime.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
   if (!match) return "";
   const [, hoursStr, minutesStr, modifier] = match;
   let hours = parseInt(hoursStr, 10);

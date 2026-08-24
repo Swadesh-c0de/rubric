@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import AccountClient from "./AccountClient";
 
+export const instant = false;
+
 export default async function AccountPage() {
   const session = await getServerSession(authOptions);
 
@@ -20,7 +22,7 @@ export default async function AccountPage() {
   });
 
   // Serialize Date objects to strings for Client Component boundary
-  const serializedSessions = sessions.map((s) => ({
+  const serializedSessions = sessions.map((s: { id: string; name: string; startDate: Date; endDate: Date; standardClassDuration: number }) => ({
     id: s.id,
     name: s.name,
     startDate: s.startDate.toISOString(),

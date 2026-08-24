@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
 import styles from "./dashboard.module.css";
 
+export const instant = false;
+
 export default async function DashboardLayout({
   children,
 }: {

@@ -14,7 +14,12 @@ const getPrismaInstance = () => {
   }
 
   if (!globalForPrisma.pgPool) {
-    globalForPrisma.pgPool = new Pool({ connectionString: dbUrl });
+    globalForPrisma.pgPool = new Pool({
+      connectionString: dbUrl,
+      max: 10,
+      idleTimeoutMillis: 30000,
+      connectionTimeoutMillis: 5000,
+    });
   }
   const adapter = new PrismaPg(globalForPrisma.pgPool);
   return new PrismaClient({ adapter });

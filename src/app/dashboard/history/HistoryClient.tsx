@@ -3,12 +3,13 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { AnimatePresence } from "framer-motion";
-import { Search, FileText, LayoutGrid, List } from "lucide-react";
+import { Search, FileText, LayoutGrid, List, ChevronLeft, ChevronRight } from "lucide-react";
 import styles from "./HistoryClient.module.css";
 import CustomSelect from "@/components/CustomSelect";
 import HistoryTable from "@/components/history/HistoryTable";
 import HistoryGrid from "@/components/history/HistoryGrid";
 import HistoryDrawer from "@/components/history/HistoryDrawer";
+import { toLocalYYYYMMDD, toUtcYYYYMMDD } from "@/lib/datetime";
 
 interface Session {
   id: string;
@@ -59,11 +60,69 @@ export default function HistoryClient({
   const [filterSubject, setFilterSubject] = useState("ALL");
   const [filterStatus, setFilterStatus] = useState("ALL");
   const [searchTerm, setSearchTerm] = useState("");
+  const [timelinePreset, setTimelinePreset] = useState("ALL");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [loading, setLoading] = useState(false);
   const [viewMode, setViewMode] = useState<"table" | "grid">("table");
   const [selectedRecord, setSelectedRecord] = useState<AttendanceRecord | null>(null);
 
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
   const isInitialMount = useRef(true);
+
+  const handleTimelinePresetChange = (preset: string) => {
+    setTimelinePreset(preset);
+    const now = new Date();
+    if (preset === "ALL") {
+      setStartDate("");
+      setEndDate("");
+    } else if (preset === "TODAY") {
+      const todayStr = toLocalYYYYMMDD(now);
+      setStartDate(todayStr);
+      setEndDate(todayStr);
+    } else if (preset === "THIS_WEEK") {
+      const day = now.getDay();
+      const diffToMonday = day === 0 ? -6 : 1 - day;
+      const monday = new Date(now.getFullYear(), now.getMonth(), now.getDate() + diffToMonday);
+      const sunday = new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + 6);
+      setStartDate(toLocalYYYYMMDD(monday));
+      setEndDate(toLocalYYYYMMDD(sunday));
+    } else if (preset === "THIS_MONTH") {
+      const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+      const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+      setStartDate(toLocalYYYYMMDD(firstDay));
+      setEndDate(toLocalYYYYMMDD(lastDay));
+    } else if (preset === "LAST_30_DAYS") {
+      const thirtyDaysAgo = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 29);
+      setStartDate(toLocalYYYYMMDD(thirtyDaysAgo));
+      setEndDate(toLocalYYYYMMDD(now));
+    }
+  };
+
+  const handleResetFilters = () => {
+    setSearchTerm("");
+    setFilterSubject("ALL");
+    setFilterStatus("ALL");
+    setTimelinePreset("ALL");
+    setStartDate("");
+    setEndDate("");
+  };
+
+  const hasActiveFilters =
+    searchTerm !== "" ||
+    filterSubject !== "ALL" ||
+    filterStatus !== "ALL" ||
+    timelinePreset !== "ALL" ||
+    startDate !== "" ||
+    endDate !== "";
+
+  // Reset page when filters, session or pageSize change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filterSubject, filterStatus, searchTerm, startDate, endDate, activeSession, pageSize]);
 
   const fetchHistoryData = useCallback(async (sessionId: string) => {
     setLoading(true);
@@ -128,7 +187,17 @@ export default function HistoryClient({
       (rec.notes && rec.notes.toLowerCase().includes(searchTerm.toLowerCase())) ||
       subject.name.toLowerCase().includes(searchTerm.toLowerCase());
 
-    return matchesSubject && matchesStatus && matchesSearch;
+    const recDateStr = toUtcYYYYMMDD(rec.date);
+    const matchesStartDate = !startDate || recDateStr >= startDate;
+    const matchesEndDate = !endDate || recDateStr <= endDate;
+
+    return (
+      matchesSubject &&
+      matchesStatus &&
+      matchesSearch &&
+      matchesStartDate &&
+      matchesEndDate
+    );
   });
 
   // Sort: Newest date first, then by class timing
@@ -140,6 +209,30 @@ export default function HistoryClient({
     const timeB = b.classTiming || "";
     return timeA.localeCompare(timeB);
   });
+
+  // Pagination calculations
+  const totalRecords = sortedRecords.length;
+  const totalPages = Math.max(1, Math.ceil(totalRecords / pageSize));
+  const safeCurrentPage = Math.min(currentPage, totalPages);
+  const startIndex = (safeCurrentPage - 1) * pageSize;
+  const endIndex = Math.min(startIndex + pageSize, totalRecords);
+  const paginatedRecords = sortedRecords.slice(startIndex, endIndex);
+
+  const getPageNumbers = () => {
+    const pages: (number | "...")[] = [];
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      if (safeCurrentPage <= 4) {
+        pages.push(1, 2, 3, 4, 5, "...", totalPages);
+      } else if (safeCurrentPage >= totalPages - 3) {
+        pages.push(1, "...", totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
+      } else {
+        pages.push(1, "...", safeCurrentPage - 1, safeCurrentPage, safeCurrentPage + 1, "...", totalPages);
+      }
+    }
+    return pages;
+  };
 
   if (loading && sessions.length === 0) {
     return (
@@ -178,7 +271,7 @@ export default function HistoryClient({
       <div className={styles.controlsCard}>
         <div className={styles.filtersGrid}>
           {/* Search bar */}
-          <div className={styles.filterGroup}>
+          <div className={`${styles.filterGroup} ${styles.searchFilterGroup}`}>
             <label className={styles.filterLabel}>Search Memos</label>
             <div className={styles.inputWrapper}>
               <Search size={16} className={styles.searchIcon} />
@@ -193,7 +286,7 @@ export default function HistoryClient({
           </div>
 
           {/* Subject Filter */}
-          <div className={styles.filterGroup}>
+          <div className={`${styles.filterGroup} ${styles.subjectFilterGroup}`}>
             <label className={styles.filterLabel}>Subject</label>
             <CustomSelect
               value={filterSubject}
@@ -207,7 +300,7 @@ export default function HistoryClient({
           </div>
 
           {/* Status Filter */}
-          <div className={styles.filterGroup}>
+          <div className={`${styles.filterGroup} ${styles.statusFilterGroup}`}>
             <label className={styles.filterLabel}>Status</label>
             <CustomSelect
               value={filterStatus}
@@ -222,16 +315,54 @@ export default function HistoryClient({
             />
           </div>
 
+          {/* Timeline Filter */}
+          <div className={`${styles.filterGroup} ${styles.timelineFilterGroup}`}>
+            <label className={styles.filterLabel}>Timeline</label>
+            <CustomSelect
+              value={timelinePreset}
+              onChange={(val) => handleTimelinePresetChange(val)}
+              options={[
+                { value: "ALL", label: "All Time" },
+                { value: "TODAY", label: "Today" },
+                { value: "THIS_WEEK", label: "This Week" },
+                { value: "THIS_MONTH", label: "This Month" },
+                { value: "LAST_30_DAYS", label: "Past 30 Days" },
+                { value: "CUSTOM", label: "Custom Range" },
+              ]}
+              triggerClassName="input-field"
+            />
+          </div>
+
+          {/* Date range pickers (only rendered when 'Custom Range' is active) */}
+          {timelinePreset === "CUSTOM" && (
+            <div className={styles.dateRangeGroup}>
+              <div className={styles.dateField}>
+                <label className={styles.filterLabel}>From Date</label>
+                <input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  className={`input-field ${styles.dateInput}`}
+                />
+              </div>
+              <div className={styles.dateField}>
+                <label className={styles.filterLabel}>To Date</label>
+                <input
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  className={`input-field ${styles.dateInput}`}
+                />
+              </div>
+            </div>
+          )}
+
           {/* Actions button/toggles */}
           <div className={styles.actionsGroup}>
-            {(searchTerm !== "" || filterSubject !== "ALL" || filterStatus !== "ALL") && (
+            {hasActiveFilters && (
               <button
                 type="button"
-                onClick={() => {
-                  setSearchTerm("");
-                  setFilterSubject("ALL");
-                  setFilterStatus("ALL");
-                }}
+                onClick={handleResetFilters}
                 className={styles.resetBtn}
               >
                 Clear Filters
@@ -268,14 +399,10 @@ export default function HistoryClient({
           <FileText size={48} className={styles.emptyIcon} />
           <h3>No records found</h3>
           <p>Try adjusting your search criteria or add new attendance logs in the dashboard calendar.</p>
-          {(searchTerm !== "" || filterSubject !== "ALL" || filterStatus !== "ALL") && (
+          {hasActiveFilters && (
             <button
               type="button"
-              onClick={() => {
-                setSearchTerm("");
-                setFilterSubject("ALL");
-                setFilterStatus("ALL");
-              }}
+              onClick={handleResetFilters}
               className="btn btn-secondary"
               style={{ marginTop: "12px" }}
             >
@@ -283,20 +410,90 @@ export default function HistoryClient({
             </button>
           )}
         </div>
-      ) : viewMode === "table" ? (
-        <HistoryTable
-          records={sortedRecords}
-          subjects={subjects}
-          onSelectRecord={setSelectedRecord}
-          onDeleteRecord={handleDeleteRecord}
-        />
       ) : (
-        <HistoryGrid
-          records={sortedRecords}
-          subjects={subjects}
-          onSelectRecord={setSelectedRecord}
-          onDeleteRecord={handleDeleteRecord}
-        />
+        <>
+          {viewMode === "table" ? (
+            <HistoryTable
+              records={paginatedRecords}
+              subjects={subjects}
+              onSelectRecord={setSelectedRecord}
+              onDeleteRecord={handleDeleteRecord}
+            />
+          ) : (
+            <HistoryGrid
+              records={paginatedRecords}
+              subjects={subjects}
+              onSelectRecord={setSelectedRecord}
+              onDeleteRecord={handleDeleteRecord}
+            />
+          )}
+
+          {/* Pagination Toolbar */}
+          <div className={styles.paginationContainer}>
+            <div className={styles.paginationTopRow}>
+              <div className={styles.paginationInfo}>
+                Showing <strong>{totalRecords > 0 ? startIndex + 1 : 0}</strong>–<strong>{endIndex}</strong> of <strong>{totalRecords}</strong> logs
+              </div>
+
+              <div className={styles.pageSizeWrapper}>
+                <span className={styles.pageSizeLabel}>Rows per page:</span>
+                <div className={styles.pageSizePills}>
+                  {[10, 25, 50, 100].map((size) => (
+                    <button
+                      key={size}
+                      type="button"
+                      className={`${styles.pageSizePill} ${pageSize === size ? styles.pageSizePillActive : ""}`}
+                      onClick={() => setPageSize(size)}
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {totalPages > 1 && (
+              <div className={styles.paginationControls}>
+                <button
+                  type="button"
+                  className={styles.pageBtn}
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={safeCurrentPage === 1}
+                  title="Previous Page"
+                >
+                  <ChevronLeft size={16} />
+                </button>
+
+                {getPageNumbers().map((p, idx) =>
+                  p === "..." ? (
+                    <span key={`dots-${idx}`} className={styles.pageEllipsis}>
+                      •••
+                    </span>
+                  ) : (
+                    <button
+                      key={`page-${p}`}
+                      type="button"
+                      className={`${styles.pageBtn} ${safeCurrentPage === p ? styles.pageBtnActive : ""}`}
+                      onClick={() => setCurrentPage(p)}
+                    >
+                      {p}
+                    </button>
+                  )
+                )}
+
+                <button
+                  type="button"
+                  className={styles.pageBtn}
+                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={safeCurrentPage === totalPages}
+                  title="Next Page"
+                >
+                  <ChevronRight size={16} />
+                </button>
+              </div>
+            )}
+          </div>
+        </>
       )}
 
       {/* Sliding Details Drawer overlay & drawer */}

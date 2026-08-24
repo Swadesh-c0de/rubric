@@ -164,9 +164,12 @@ export default function AccountClient({ user, initialSessions }: AccountClientPr
       if (res.ok) {
         setSessions((prev) => prev.filter((s) => s.id !== sessionId));
         setMessage({ type: "success", text: "Academic session deleted." });
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setMessage({ type: "error", text: data.error || "Failed to delete session." });
       }
     } catch {
-      // silently ignore
+      setMessage({ type: "error", text: "Network error while deleting session." });
     } finally {
       setDeletingId(null);
     }

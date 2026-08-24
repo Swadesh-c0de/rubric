@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import HistoryClient from "./HistoryClient";
 
+export const instant = false;
+
 export default async function HistoryPage() {
   const session = await getServerSession(authOptions);
 
@@ -33,14 +35,14 @@ export default async function HistoryPage() {
   const records = activeSession && subjects.length > 0
     ? await prisma.attendanceRecord.findMany({
         where: {
-          subjectId: { in: subjects.map((s) => s.id) },
+          subjectId: { in: subjects.map((s: { id: string }) => s.id) },
         },
         orderBy: { date: "asc" },
       })
     : [];
 
   // Serialize Date objects to strings for Client Component boundary
-  const serializedSessions = sessions.map((s) => ({
+  const serializedSessions = sessions.map((s: { id: string; name: string; startDate: Date; endDate: Date; standardClassDuration: number }) => ({
     id: s.id,
     name: s.name,
     startDate: s.startDate.toISOString(),
@@ -48,13 +50,13 @@ export default async function HistoryPage() {
     standardClassDuration: s.standardClassDuration,
   }));
 
-  const serializedSubjects = subjects.map((s) => ({
+  const serializedSubjects = subjects.map((s: { id: string; name: string; colorCode: string }) => ({
     id: s.id,
     name: s.name,
     colorCode: s.colorCode,
   }));
 
-  const serializedRecords = records.map((r) => ({
+  const serializedRecords = records.map((r: { id: string; date: Date; status: string; notes: string | null; classTiming: string | null; subjectId: string }) => ({
     id: r.id,
     date: r.date.toISOString(),
     status: r.status,

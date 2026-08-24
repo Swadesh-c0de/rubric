@@ -28,41 +28,33 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Academic session not found" }, { status: 404 });
     }
 
-    if (dateStr) {
-      const { start: startOfDay, end: endOfDay } = parseToUtcBounds(dateStr);
+    // Fetch all subjects for the session
+    const subjects = await prisma.subject.findMany({
+      where: { sessionId },
+      orderBy: { name: "asc" },
+    });
 
-      // Fetch all subjects for the session
-      const subjects = await prisma.subject.findMany({
-        where: { sessionId },
-      });
+    const subjectIds = subjects.map((s: { id: string }) => s.id);
 
-      // Fetch all attendance records for these subjects on this day
-      const records = await prisma.attendanceRecord.findMany({
-        where: {
-          subjectId: { in: subjects.map((s: { id: string }) => s.id) },
-          date: {
-            gte: startOfDay,
-            lte: endOfDay,
+    const records = dateStr
+      ? await prisma.attendanceRecord.findMany({
+          where: {
+            subjectId: { in: subjectIds },
+            date: {
+              gte: parseToUtcBounds(dateStr).start,
+              lte: parseToUtcBounds(dateStr).end,
+            },
           },
-        },
-      });
+          orderBy: { date: "asc" },
+        })
+      : await prisma.attendanceRecord.findMany({
+          where: {
+            subjectId: { in: subjectIds },
+          },
+          orderBy: { date: "asc" },
+        });
 
-      return NextResponse.json({ subjects, records });
-    } else {
-      // Return all attendance records for this session's subjects
-      const subjects = await prisma.subject.findMany({
-        where: { sessionId },
-      });
-
-      const records = await prisma.attendanceRecord.findMany({
-        where: {
-          subjectId: { in: subjects.map((s: { id: string }) => s.id) },
-        },
-        orderBy: { date: "asc" },
-      });
-
-      return NextResponse.json({ subjects, records });
-    }
+    return NextResponse.json({ subjects, records });
   } catch (error) {
     console.error("GET /api/attendance error:", error);
     return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
@@ -214,7 +206,7 @@ export async function POST(req: Request) {
     const existingRecord = await prisma.attendanceRecord.findFirst({
       where: {
         subjectId,
-        classTiming: classTiming || null,
+        ...(classTiming ? { classTiming } : { classTiming: null, status: "CANCELLED" }),
         date: {
           gte: startOfDay,
           lte: endOfDay,

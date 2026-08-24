@@ -25,19 +25,24 @@ export function getRecordWeight(
   status: string,
   standardDuration: number = 50
 ): number {
-  if (status === "CANCELLED" || !classTiming) return 0;
+  if (status === "CANCELLED") return 0;
+  if (!classTiming) return 1;
   
   if (classTiming.includes("|w:")) {
     const parts = classTiming.split("|w:");
     const weightVal = parseInt(parts[1], 10);
-    if (!isNaN(weightVal)) return weightVal;
+    if (!isNaN(weightVal) && weightVal > 0) return weightVal;
   }
 
   const range = parseTimingRange(classTiming);
   if (!range) return 1;
   const duration = range.end - range.start;
   if (duration <= 0) return 1;
-  // Weight is the duration divided by standard class duration, rounded to the nearest integer.
-  // We ensure it is at least 1 class slot.
-  return Math.max(1, Math.round(duration / standardDuration));
+  const standard = standardDuration > 0 ? standardDuration : 50;
+  return Math.max(1, Math.round(duration / standard));
+}
+
+export function extractTimingDisplay(classTiming: string | null): string {
+  if (!classTiming) return "";
+  return classTiming.split("|")[0].trim();
 }

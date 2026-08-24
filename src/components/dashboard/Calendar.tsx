@@ -22,6 +22,7 @@ interface CalendarProps {
   selectedDate: Date;
   setSelectedDate: (date: Date) => void;
   navigateMonth: (direction: "prev" | "next") => void;
+  onJumpToToday?: () => void;
   subjects: Subject[];
   records: AttendanceRecord[];
 }
@@ -31,6 +32,7 @@ export default function Calendar({
   selectedDate,
   setSelectedDate,
   navigateMonth,
+  onJumpToToday,
   subjects,
   records,
 }: CalendarProps) {
@@ -102,10 +104,20 @@ export default function Calendar({
           {currentMonth.toLocaleDateString("en-US", { month: "long", year: "numeric" })}
         </h4>
         <div className={styles.nav}>
-          <button onClick={() => navigateMonth("prev")} className={styles.navBtn}>
+          {onJumpToToday && (
+            <button
+              onClick={onJumpToToday}
+              className="btn btn-secondary"
+              style={{ padding: "4px 10px", fontSize: "0.75rem", height: "34px" }}
+              title="Jump to Today"
+            >
+              Today
+            </button>
+          )}
+          <button onClick={() => navigateMonth("prev")} className={styles.navBtn} title="Previous Month">
             <ChevronLeft size={18} />
           </button>
-          <button onClick={() => navigateMonth("next")} className={styles.navBtn}>
+          <button onClick={() => navigateMonth("next")} className={styles.navBtn} title="Next Month">
             <ChevronRight size={18} />
           </button>
         </div>

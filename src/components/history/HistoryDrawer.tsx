@@ -78,7 +78,8 @@ export default function HistoryDrawer({
     setEditDate(toISODateString(selectedRecord.date));
 
     if (selectedRecord.classTiming) {
-      const parts = selectedRecord.classTiming.split(/[\u2013-]/);
+      const cleanTiming = selectedRecord.classTiming.split("|")[0];
+      const parts = cleanTiming.split(/[\u2013-]/);
       setEditStartTime(parts[0] ? to24Hour(parts[0]) : "");
       setEditEndTime(parts[1] ? to24Hour(parts[1]) : "");
     } else {
@@ -174,10 +175,21 @@ export default function HistoryDrawer({
     setIsSaving(true);
     setEditError("");
 
-    const classTiming =
-      editStatus !== "CANCELLED"
-        ? `${to12Hour(editStartTime)} – ${to12Hour(editEndTime)}`
-        : null;
+    let classTiming: string | null = null;
+    if (editStatus !== "CANCELLED") {
+      const timingString = `${to12Hour(editStartTime)} – ${to12Hour(editEndTime)}`;
+      const range = parseTimingRange(timingString);
+      if (range) {
+        const duration = range.end - range.start;
+        const standard = activeSession?.standardClassDuration || 50;
+        const weight = Math.max(1, Math.round(duration / standard));
+        classTiming = `${timingString}|w:${weight}`;
+      } else {
+        classTiming = timingString;
+      }
+    }
+
+    const cleanNotes = editNotes.replace(/\|\s*$/, "").trim();
 
     try {
       const res = await fetch("/api/attendance", {
@@ -188,7 +200,7 @@ export default function HistoryDrawer({
           subjectId: editSubjectId,
           date: editDate,
           status: editStatus,
-          notes: editNotes || null,
+          notes: cleanNotes || null,
           classTiming,
         }),
       });

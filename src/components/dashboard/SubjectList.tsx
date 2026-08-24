@@ -85,11 +85,18 @@ export default function SubjectList({
     const targetRate = target / 100;
 
     if (currentRate < targetRate) {
+      if (targetRate >= 1) {
+        return {
+          status: "danger",
+          text: "Cannot reach 100% target",
+          subtext: "classes already missed this term",
+        };
+      }
       const needed = Math.ceil((targetRate * subTotal - subAtt) / (1 - targetRate));
       return {
         status: "danger",
         text: `Attend next ${needed} class${needed > 1 ? "es" : ""}`,
-        subtext: `to recover to target ${target}%`
+        subtext: `to recover to target ${target}%`,
       };
     } else {
       const leaves = Math.floor((subAtt - targetRate * subTotal) / targetRate);
@@ -98,7 +105,7 @@ export default function SubjectList({
         text: leaves > 0 
           ? `Can take ${leaves} leave${leaves > 1 ? "s" : ""} safely` 
           : `Cannot miss any classes`,
-        subtext: leaves > 0 ? "without failing criteria" : "currently at limit"
+        subtext: leaves > 0 ? "without failing criteria" : "currently at limit",
       };
     }
   };
